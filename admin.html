@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel — Sitaram Public School</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --navy:#0a1a3a;--navy-light:#132248;--navy-card:#0f2050;
+    --gold:#c9a84c;--gold-light:#e8c97a;
+    --success:#2ecc71;--danger:#e74c3c;
+    --text:#e8eaf0;--text-dim:rgba(232,234,240,0.6);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Lato',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
+
+  /* LOGIN */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy) 0%,#0d2060 100%);}
+  .login-box{background:var(--navy-card);border-radius:20px;padding:48px 40px;width:100%;max-width:380px;border:1px solid rgba(201,168,76,0.2);box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;}
+  .login-logo{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;font-family:'Playfair Display',serif;color:var(--navy);font-weight:900;}
+  .login-box h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold-light);margin-bottom:6px;}
+  .login-box p{font-size:13px;color:var(--text-dim);margin-bottom:32px;}
+  .login-box input{width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:14px 16px;color:var(--text);font-size:15px;outline:none;margin-bottom:16px;transition:border 0.3s;}
+  .login-box input:focus{border-color:var(--gold);}
+  .btn-gold{width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity 0.2s;}
+  .btn-gold:hover{opacity:0.9;}
+  .login-error{color:var(--danger);font-size:13px;margin-top:12px;display:none;}
+
+  /* LAYOUT */
+  #adminPanel{display:none;min-height:100vh;}
+  .admin-header{background:var(--navy-card);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid rgba(201,168,76,0.2);position:sticky;top:0;z-index:100;}
+  .admin-header-left{display:flex;align-items:center;gap:14px;}
+  .admin-logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--navy);overflow:hidden;}
+  .admin-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .admin-header-left h1{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-light);}
+  .admin-header-left span{font-size:12px;color:var(--text-dim);display:block;}
+  .btn-logout{background:rgba(231,76,60,0.15);color:var(--danger);border:1px solid rgba(231,76,60,0.3);border-radius:8px;padding:8px 18px;cursor:pointer;font-size:13px;font-weight:700;}
+
+  .admin-body{display:flex;min-height:calc(100vh - 73px);}
+  .sidebar{width:220px;background:var(--navy-card);border-right:1px solid rgba(255,255,255,0.07);padding:24px 0;flex-shrink:0;}
+  .sidebar-item{display:flex;align-items:center;gap:12px;padding:14px 24px;cursor:pointer;font-size:14px;color:var(--text-dim);transition:all 0.2s;border-left:3px solid transparent;}
+  .sidebar-item:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
+  .sidebar-item.active{color:var(--gold);background:rgba(201,168,76,0.1);border-left-color:var(--gold);}
+  .sidebar-item .icon{font-size:18px;}
+
+  .admin-main{flex:1;padding:32px;overflow-y:auto;}
+  .tab-section{display:none;}
+  .tab-section.active{display:block;}
+
+  .admin-card{background:var(--navy-card);border-radius:16px;padding:28px;border:1px solid rgba(255,255,255,0.07);margin-bottom:24px;}
+  .card-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-light);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+  .card-sub{font-size:13px;color:var(--text-dim);margin-bottom:24px;}
+  .page-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold-light);margin-bottom:6px;}
+  .page-sub{font-size:13px;color:var(--text-dim);margin-bottom:28px;}
+
+  /* UPLOAD */
+  .upload-area{border:2px dashed rgba(201,168,76,0.35);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(201,168,76,0.04);position:relative;}
+  .upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+  .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{font-size:36px;margin-bottom:10px;}
+  .upload-area p{font-size:14px;color:var(--text-dim);}
+  .upload-area strong{color:var(--gold);}
+
+  /* PREVIEW */
+  .preview-bg{width:100%;max-height:200px;object-fit:cover;border-radius:12px;border:2px solid rgba(201,168,76,0.3);display:none;margin-top:16px;}
+  .preview-circle{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);display:none;margin-top:16px;}
+  .preview-placeholder{width:100%;height:140px;border-radius:12px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:36px;color:rgba(201,168,76,0.3);border:1px solid rgba(201,168,76,0.1);margin-top:16px;}
+  .circle-preview-wrap{width:100px;height:100px;border-radius:50%;background:rgba(201,168,76,0.15);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;margin-top:16px;}
+  .circle-preview-wrap img{width:100%;height:100%;object-fit:cover;}
+
+  /* UPLOADING INDICATOR */
+  .uploading{display:none;color:var(--gold-light);font-size:13px;margin-top:10px;align-items:center;gap:8px;}
+  .uploading.show{display:flex;}
+  .spin{width:16px;height:16px;border:2px solid rgba(201,168,76,0.3);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* BUTTONS */
+  .btn-save{background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);border:none;border-radius:10px;padding:13px 32px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;display:inline-flex;align-items:center;gap:8px;transition:opacity 0.2s;}
+  .btn-save:hover{opacity:0.9;}
+  .btn-save:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-clear{background:rgba(231,76,60,0.15);color:var(--danger);border:1px solid rgba(231,76,60,0.3);border-radius:10px;padding:13px 24px;font-size:14px;font-weight:700;cursor:pointer;margin-top:16px;margin-left:12px;}
+  .btn-danger-sm{background:rgba(231,76,60,0.15);color:var(--danger);border:1px solid rgba(231,76,60,0.3);border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;}
+
+  /* FORM */
+  .field-group{margin-bottom:20px;}
+  .field-group label{display:block;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:700;}
+  .field-group input,.field-group textarea{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:13px 16px;color:var(--text);font-size:14px;outline:none;transition:border 0.3s;font-family:'Lato',sans-serif;}
+  .field-group input:focus,.field-group textarea:focus{border-color:var(--gold);}
+  .field-group textarea{min-height:90px;resize:vertical;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  /* FACULTY */
+  .faculty-admin-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.06);}
+  .faculty-admin-photo{width:50px;height:50px;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;}
+  .faculty-admin-photo img{width:100%;height:100%;object-fit:cover;}
+
+  /* GALLERY */
+  .gallery-thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;border:2px solid rgba(201,168,76,0.2);}
+  .gallery-thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+
+  /* SAVING OVERLAY */
+  .saving-overlay{position:fixed;inset:0;background:rgba(10,26,58,0.85);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+  .saving-overlay.show{display:flex;}
+  .saving-overlay .spin{width:40px;height:40px;border:3px solid rgba(201,168,76,0.3);border-top-color:var(--gold);}
+  .saving-overlay p{color:var(--gold-light);font-size:16px;font-family:'Playfair Display',serif;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:32px;right:32px;z-index:9999;background:var(--success);color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.3);transform:translateY(80px);opacity:0;transition:all 0.35s;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.error{background:var(--danger);}
+
+  @media(max-width:768px){.sidebar{display:none;}.admin-main{padding:20px 16px;}.row2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- SAVING OVERLAY -->
+<div class="saving-overlay" id="savingOverlay">
+  <div class="spin"></div>
+  <p>Saving...</p>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">S</div>
+    <h2>Admin Login</h2>
+    <p>Sitaram Public School · Admin Panel</p>
+    <input type="text" id="loginUser" placeholder="Username" autocomplete="off"/>
+    <input type="password" id="loginPass" placeholder="Password"/>
+    <button class="btn-gold" onclick="doLogin()">Login →</button>
+    <div class="login-error" id="loginError">❌ Wrong username or password</div>
+    <div style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.3);">Default: admin / admin123</div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <header class="admin-header">
+    <div class="admin-header-left">
+      <div class="admin-logo" id="adminNavLogo">S</div>
+      <div><h1>Admin Panel</h1><span>Sitaram Public School</span></div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">Logout</button>
+  </header>
+
+  <div class="admin-body">
+    <nav class="sidebar">
+      <div class="sidebar-item active" onclick="showTab('home',this)"><span class="icon">🏠</span> Home Images</div>
+      <div class="sidebar-item" onclick="showTab('school',this)"><span class="icon">🏫</span> School Info</div>
+      <div class="sidebar-item" onclick="showTab('leadership',this)"><span class="icon">👤</span> Director & Principal</div>
+      <div class="sidebar-item" onclick="showTab('faculty',this)"><span class="icon">👨‍🏫</span> Faculty</div>
+      <div class="sidebar-item" onclick="showTab('gallery',this)"><span class="icon">🖼️</span> Gallery</div>
+      <div class="sidebar-item" onclick="showTab('contact',this)"><span class="icon">📞</span> Contact & Admission</div>
+    </nav>
+
+    <main class="admin-main">
+
+      <!-- HOME IMAGES -->
+      <div class="tab-section active" id="tab-home">
+        <div class="page-title">🏠 Home Page Images</div>
+        <div class="page-sub">School background photo aur logo yahan se change karein — kisi bhi device se!</div>
+
+        <div class="admin-card">
+          <div class="card-title">📸 School Background Photo</div>
+          <div class="card-sub">Hero section ke peeche dikhne wali school ki photo</div>
+          <div class="upload-area">
+            <input type="file" id="bgInput" accept="image/*" onchange="uploadToCloudinary(this,'bg')"/>
+            <div class="upload-icon">🏫</div>
+            <p><strong>Click karein</strong> ya photo yahan drop karein</p>
+            <p style="font-size:12px;margin-top:4px;">JPG/PNG — 1920×1080 recommended</p>
+          </div>
+          <div class="uploading" id="bgUploading"><div class="spin"></div> Upload ho raha hai...</div>
+          <div class="preview-placeholder" id="bgPlaceholder">🏫</div>
+          <img id="bgPreview" class="preview-bg" alt="BG Preview"/>
+          <div style="margin-top:12px;">
+            <button class="btn-save" onclick="saveImageField('school_bg')">💾 Save Background Photo</button>
+            <button class="btn-clear" onclick="clearField('school_bg','bgPreview','bgPlaceholder')">✕ Remove</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">🔵 School Logo</div>
+          <div class="card-sub">Center circular logo — home page ke beech mein</div>
+          <div class="upload-area">
+            <input type="file" id="logoInput" accept="image/*" onchange="uploadToCloudinary(this,'logo')"/>
+            <div class="upload-icon">🔵</div>
+            <p><strong>Click karein</strong> ya logo yahan drop karein</p>
+            <p style="font-size:12px;margin-top:4px;">Square image best (400×400px)</p>
+          </div>
+          <div class="uploading" id="logoUploading"><div class="spin"></div> Upload ho raha hai...</div>
+          <div class="circle-preview-wrap" id="logoPreview">🏫</div>
+          <div style="margin-top:12px;">
+            <button class="btn-save" onclick="saveImageField('school_logo')">💾 Save Logo</button>
+            <button class="btn-clear" onclick="clearField('school_logo','logoPreview',null)">✕ Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHOOL INFO -->
+      <div class="tab-section" id="tab-school">
+        <div class="page-title">🏫 School Info</div>
+        <div class="page-sub">School ka naam, tagline, established year</div>
+        <div class="admin-card">
+          <div class="field-group"><label>School Name</label><input type="text" id="schoolName" placeholder="Sitaram Public School"/></div>
+          <div class="field-group"><label>Tagline</label><input type="text" id="schoolTagline" placeholder="Shaping Futures..."/></div>
+          <div class="row2">
+            <div class="field-group"><label>Established Year</label><input type="text" id="schoolEst" placeholder="1995"/></div>
+            <div class="field-group"><label>City / Location</label><input type="text" id="schoolCity" placeholder="Faridabad, Haryana"/></div>
+          </div>
+          <button class="btn-save" onclick="saveSection('school')">💾 Save School Info</button>
+        </div>
+      </div>
+
+      <!-- LEADERSHIP -->
+      <div class="tab-section" id="tab-leadership">
+        <div class="page-title">👤 Director & Principal</div>
+        <div class="page-sub">Photo, naam, qualification aur message update karein</div>
+
+        <div class="admin-card">
+          <div class="card-title">👨‍💼 Director</div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="text-align:center;flex-shrink:0;">
+              <div class="circle-preview-wrap" id="directorPhotoPreview" style="cursor:pointer;" onclick="document.getElementById('directorPhotoInput').click()">👨‍💼</div>
+              <input type="file" id="directorPhotoInput" accept="image/*" onchange="uploadToCloudinary(this,'director_photo')" style="display:none"/>
+              <div class="uploading" id="director_photoUploading" style="justify-content:center;"><div class="spin"></div></div>
+              <div style="font-size:11px;color:var(--gold);margin-top:8px;cursor:pointer;" onclick="document.getElementById('directorPhotoInput').click()">📷 Upload</div>
+            </div>
+            <div style="flex:1;min-width:220px;">
+              <div class="field-group"><label>Name</label><input type="text" id="directorName" placeholder="Sh. Ramesh Kumar Gupta"/></div>
+              <div class="field-group"><label>Qualification / Title</label><input type="text" id="directorQual" placeholder="M.A., B.Ed. | Founder & Director"/></div>
+              <div class="field-group"><label>Message</label><textarea id="directorMsg" placeholder="Message here..."></textarea></div>
+            </div>
+          </div>
+          <button class="btn-save" onclick="saveSection('director')">💾 Save Director Info</button>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">👩‍🏫 Principal</div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;">
+            <div style="text-align:center;flex-shrink:0;">
+              <div class="circle-preview-wrap" id="principalPhotoPreview" style="cursor:pointer;" onclick="document.getElementById('principalPhotoInput').click()">👩‍🏫</div>
+              <input type="file" id="principalPhotoInput" accept="image/*" onchange="uploadToCloudinary(this,'principal_photo')" style="display:none"/>
+              <div class="uploading" id="principal_photoUploading" style="justify-content:center;"><div class="spin"></div></div>
+              <div style="font-size:11px;color:var(--gold);margin-top:8px;cursor:pointer;" onclick="document.getElementById('principalPhotoInput').click()">📷 Upload</div>
+            </div>
+            <div style="flex:1;min-width:220px;">
+              <div class="field-group"><label>Name</label><input type="text" id="principalName" placeholder="Mrs. Sunita Sharma"/></div>
+              <div class="field-group"><label>Qualification / Title</label><input type="text" id="principalQual" placeholder="M.Sc., M.Ed., Ph.D. | Principal"/></div>
+              <div class="field-group"><label>Message</label><textarea id="principalMsg" placeholder="Message here..."></textarea></div>
+            </div>
+          </div>
+          <button class="btn-save" onclick="saveSection('principal')">💾 Save Principal Info</button>
+        </div>
+      </div>
+
+      <!-- FACULTY -->
+      <div class="tab-section" id="tab-faculty">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div><div class="page-title">👨‍🏫 Faculty</div><div class="page-sub" style="margin-bottom:0;">Teachers add, edit, remove karein</div></div>
+          <button class="btn-save" style="margin-top:0;" onclick="showAddFaculty()">+ Add Teacher</button>
+        </div>
+
+        <div id="addFacultyForm" style="display:none;" class="admin-card">
+          <div class="card-title">➕ New Teacher</div>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+            <div class="circle-preview-wrap" id="newFacultyPhotoPreview" style="width:70px;height:70px;font-size:28px;cursor:pointer;flex-shrink:0;" onclick="document.getElementById('newFacultyPhotoInput').click()">👤</div>
+            <div>
+              <button class="btn-save" style="margin-top:0;padding:10px 20px;font-size:13px;" onclick="document.getElementById('newFacultyPhotoInput').click()">📷 Photo Upload</button>
+              <div class="uploading" id="newFacultyUploading"><div class="spin"></div> Uploading...</div>
+            </div>
+            <input type="file" id="newFacultyPhotoInput" accept="image/*" onchange="uploadToCloudinary(this,'new_faculty_photo')" style="display:none"/>
+          </div>
+          <div class="row2">
+            <div class="field-group"><label>Name</label><input type="text" id="newFacultyName" placeholder="Mr. Anil Verma"/></div>
+            <div class="field-group"><label>Subject</label><input type="text" id="newFacultySubject" placeholder="Mathematics"/></div>
+          </div>
+          <button class="btn-save" onclick="addFaculty()">✓ Add Teacher</button>
+          <button class="btn-clear" onclick="document.getElementById('addFacultyForm').style.display='none'">Cancel</button>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">Current Faculty</div>
+          <div id="facultyItems"><div style="color:var(--text-dim);text-align:center;padding:20px;font-size:14px;">Loading...</div></div>
+        </div>
+      </div>
+
+      <!-- GALLERY -->
+      <div class="tab-section" id="tab-gallery">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div><div class="page-title">🖼️ Gallery</div><div class="page-sub" style="margin-bottom:0;">Events add karein aur photos upload karein</div></div>
+          <button class="btn-save" style="margin-top:0;" onclick="showAddEvent()">+ New Event</button>
+        </div>
+        <div id="addEventForm" style="display:none;" class="admin-card">
+          <div class="field-group"><label>Event Title</label><input type="text" id="newEventTitle" placeholder="Annual Day 2025"/></div>
+          <button class="btn-save" onclick="addEvent()">✓ Create Event</button>
+          <button class="btn-clear" onclick="document.getElementById('addEventForm').style.display='none'">Cancel</button>
+        </div>
+        <div id="galleryEvents"></div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="tab-section" id="tab-contact">
+        <div class="page-title">📞 Contact & Admission</div>
+        <div class="page-sub">Phone, email, address aur admission info update karein</div>
+
+        <div class="admin-card">
+          <div class="card-title">Contact Details</div>
+          <div class="field-group"><label>Address</label><textarea id="contactAddress" placeholder="Near Bus Stand..."></textarea></div>
+          <div class="row2">
+            <div class="field-group"><label>Mobile / Reception Number</label><input type="text" id="contactMobile" placeholder="+91 98765 43210"/></div>
+            <div class="field-group"><label>Email</label><input type="text" id="contactEmail" placeholder="info@school.in"/></div>
+          </div>
+          <button class="btn-save" onclick="saveSection('contact')">💾 Save Contact Info</button>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">Admission Info</div>
+          <div class="field-group"><label>Reception Number (Admission)</label><input type="text" id="admissionPhone" placeholder="+91 98765 43210"/></div>
+          <div class="field-group"><label>Admission Instructions (ek per line)</label><textarea id="admissionInstructions" style="min-height:140px;" placeholder="Visit school office between 9 AM..."></textarea></div>
+          <button class="btn-save" onclick="saveSection('admission')">💾 Save Admission Info</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+var CLOUD_NAME = 'de1zkd91h';
+var UPLOAD_PRESET = 'sitaram_school';
+var SB_URL = 'https://rsbrwhtnidcuiyfhlsio.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzYnJ3aHRuaWRjdWl5Zmhsc2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjU3MzYsImV4cCI6MjA5MjUwMTczNn0.uxKe2GsRqd9jnCv5iVAFtS_CuZZ0lSTe2NPorc54uk8';
+var SB_API = SB_URL + '/rest/v1/school_data?id=eq.1';
+
+// In-memory data store
+var DATA = {};
+
+// ============================================================
+// AUTH
+// ============================================================
+function doLogin() {
+  var u = document.getElementById('loginUser').value.trim();
+  var p = document.getElementById('loginPass').value.trim();
+  if (u === 'admin' && p === 'admin123') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', function(e) { if(e.key==='Enter') doLogin(); });
+function doLogout() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(name, el) {
+  document.querySelectorAll('.tab-section').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.sidebar-item').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('tab-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, isError) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');}, 3000);
+}
+
+// ============================================================
+// SUPABASE — LOAD
+// ============================================================
+function loadData() {
+  fetch(SB_API, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY
+    }
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(rows){
+    DATA = (rows && rows[0] && rows[0].data) ? rows[0].data : {};
+    populateFields();
+    renderFacultyList();
+    renderGallery();
+    if(DATA.school_logo) {
+      document.getElementById('adminNavLogo').innerHTML = '<img src="'+DATA.school_logo+'"/>';
+    }
+  })
+  .catch(function(e){ showToast('❌ Load failed: '+e.message, true); });
+}
+
+// ============================================================
+// SUPABASE — SAVE
+// ============================================================
+function saveData() {
+  document.getElementById('savingOverlay').classList.add('show');
+  return fetch(SB_API, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ data: DATA })
+  })
+  .then(function(r){
+    if(!r.ok) return r.text().then(function(t){ throw new Error(t); });
+    document.getElementById('savingOverlay').classList.remove('show');
+    showToast('✅ Saved! Website pe live ho gaya!');
+  })
+  .catch(function(e){
+    document.getElementById('savingOverlay').classList.remove('show');
+    showToast('❌ Save failed: '+e.message, true);
+  });
+}
+
+// ============================================================
+// CLOUDINARY — UPLOAD IMAGE
+// ============================================================
+function uploadToCloudinary(input, fieldKey) {
+  var file = input.files[0];
+  if(!file) return;
+
+  // Map short keys to actual DATA keys
+  var dataKey = fieldKey;
+  if(fieldKey === 'bg') dataKey = 'school_bg';
+  if(fieldKey === 'logo') dataKey = 'school_logo';
+
+  var uploadingEl = document.getElementById(fieldKey + 'Uploading');
+  if(uploadingEl) uploadingEl.classList.add('show');
+
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+
+  fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(r){return r.json();})
+  .then(function(res){
+    if(uploadingEl) uploadingEl.classList.remove('show');
+    var url = res.secure_url;
+    if(!url) { showToast('❌ Upload failed', true); return; }
+
+    // Save URL to DATA with correct key
+    DATA[dataKey] = url;
+
+    // Update preview
+    updatePreview(fieldKey, url);
+    showToast('✅ Photo uploaded! Save button dabao.');
+  })
+  .catch(function(e){
+    if(uploadingEl) uploadingEl.classList.remove('show');
+    showToast('❌ Upload error: '+e.message, true);
+  });
+}
+
+function updatePreview(fieldKey, url) {
+  if(fieldKey === 'bg') {
+    var prev = document.getElementById('bgPreview');
+    var ph = document.getElementById('bgPlaceholder');
+    prev.src = url; prev.style.display='block';
+    if(ph) ph.style.display='none';
+  } else if(fieldKey === 'logo') {
+    var lp = document.getElementById('logoPreview');
+    lp.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;"/>';
+    document.getElementById('adminNavLogo').innerHTML = '<img src="'+url+'"/>';
+  } else if(fieldKey === 'director_photo') {
+    document.getElementById('directorPhotoPreview').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;"/>';
+  } else if(fieldKey === 'principal_photo') {
+    document.getElementById('principalPhotoPreview').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;"/>';
+  } else if(fieldKey === 'new_faculty_photo') {
+    document.getElementById('newFacultyPhotoPreview').innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;"/>';
+    window._newFacultyPhoto = url;
+  }
+}
+
+// ============================================================
+// SAVE SINGLE IMAGE FIELD (for bg and logo manual save)
+// ============================================================
+function saveImageField(fieldKey) {
+  var dataKey = fieldKey;
+  if(fieldKey === 'bg') dataKey = 'school_bg';
+  if(fieldKey === 'logo') dataKey = 'school_logo';
+  if(!DATA[dataKey]) {
+    showToast('⚠️ Pehle photo upload karein!', true);
+    return;
+  }
+  saveData();
+}
+
+// ============================================================
+// CLEAR FIELD
+// ============================================================
+function clearField(dataKey, previewId, placeholderId) {
+  delete DATA[dataKey];
+  var el = document.getElementById(previewId);
+  if(el) {
+    if(el.tagName === 'IMG') { el.style.display='none'; el.src=''; }
+    else { el.innerHTML = dataKey.includes('logo') ? '🏫' : (dataKey.includes('director') ? '👨‍💼' : '👩‍🏫'); }
+  }
+  if(placeholderId) {
+    var ph = document.getElementById(placeholderId);
+    if(ph) ph.style.display='flex';
+  }
+  saveData();
+}
+
+// ============================================================
+// POPULATE FIELDS FROM DATA
+// ============================================================
+function populateFields() {
+  var fields = {
+    'schoolName': 'school_name', 'schoolTagline': 'school_tagline',
+    'schoolEst': 'school_est', 'schoolCity': 'school_city',
+    'directorName': 'director_name', 'directorQual': 'director_qual', 'directorMsg': 'director_msg',
+    'principalName': 'principal_name', 'principalQual': 'principal_qual', 'principalMsg': 'principal_msg',
+    'contactAddress': 'address', 'contactMobile': 'mobile', 'contactEmail': 'email',
+    'admissionPhone': 'admission_phone', 'admissionInstructions': 'admission_instructions'
+  };
+  Object.keys(fields).forEach(function(elId) {
+    var el = document.getElementById(elId);
+    if(el && DATA[fields[elId]]) el.value = DATA[fields[elId]];
+  });
+
+  // Photos
+  if(DATA.school_bg) {
+    document.getElementById('bgPreview').src = DATA.school_bg;
+    document.getElementById('bgPreview').style.display='block';
+    document.getElementById('bgPlaceholder').style.display='none';
+  }
+  if(DATA.school_logo) document.getElementById('logoPreview').innerHTML = '<img src="'+DATA.school_logo+'" style="width:100%;height:100%;object-fit:cover;"/>';
+  if(DATA.director_photo) document.getElementById('directorPhotoPreview').innerHTML = '<img src="'+DATA.director_photo+'" style="width:100%;height:100%;object-fit:cover;"/>';
+  if(DATA.principal_photo) document.getElementById('principalPhotoPreview').innerHTML = '<img src="'+DATA.principal_photo+'" style="width:100%;height:100%;object-fit:cover;"/>';
+}
+
+// ============================================================
+// SAVE SECTION
+// ============================================================
+function saveSection(section) {
+  if(section === 'school') {
+    DATA.school_name = document.getElementById('schoolName').value;
+    DATA.school_tagline = document.getElementById('schoolTagline').value;
+    DATA.school_est = document.getElementById('schoolEst').value;
+    DATA.school_city = document.getElementById('schoolCity').value;
+  } else if(section === 'director') {
+    DATA.director_name = document.getElementById('directorName').value;
+    DATA.director_qual = document.getElementById('directorQual').value;
+    DATA.director_msg = document.getElementById('directorMsg').value;
+  } else if(section === 'principal') {
+    DATA.principal_name = document.getElementById('principalName').value;
+    DATA.principal_qual = document.getElementById('principalQual').value;
+    DATA.principal_msg = document.getElementById('principalMsg').value;
+  } else if(section === 'contact') {
+    DATA.address = document.getElementById('contactAddress').value;
+    DATA.mobile = document.getElementById('contactMobile').value;
+    DATA.email = document.getElementById('contactEmail').value;
+  } else if(section === 'admission') {
+    DATA.admission_phone = document.getElementById('admissionPhone').value;
+    DATA.admission_instructions = document.getElementById('admissionInstructions').value;
+  }
+  saveData();
+}
+
+// ============================================================
+// FACULTY
+// ============================================================
+window._newFacultyPhoto = '';
+
+function showAddFaculty() {
+  document.getElementById('addFacultyForm').style.display = 'block';
+  document.getElementById('newFacultyName').value = '';
+  document.getElementById('newFacultySubject').value = '';
+  document.getElementById('newFacultyPhotoPreview').innerHTML = '👤';
+  window._newFacultyPhoto = '';
+}
+
+function addFaculty() {
+  var name = document.getElementById('newFacultyName').value.trim();
+  if(!name) { showToast('⚠️ Name zaroor bharo', true); return; }
+  var subject = document.getElementById('newFacultySubject').value.trim();
+  if(!DATA.faculty) DATA.faculty = [];
+  DATA.faculty.push({ name: name, subject: subject, photo: window._newFacultyPhoto });
+  saveData().then(function(){
+    renderFacultyList();
+    document.getElementById('addFacultyForm').style.display='none';
+  });
+}
+
+function removeFaculty(idx) {
+  DATA.faculty.splice(idx, 1);
+  saveData().then(function(){ renderFacultyList(); });
+}
+
+function renderFacultyList() {
+  var el = document.getElementById('facultyItems');
+  var faculty = DATA.faculty || [];
+  if(!faculty.length) {
+    el.innerHTML = '<div style="color:var(--text-dim);text-align:center;padding:20px;font-size:14px;">Koi teacher nahi. + Add Teacher karein.</div>';
+    return;
+  }
+  el.innerHTML = faculty.map(function(f,i){
+    return '<div class="faculty-admin-item">'
+      + '<div class="faculty-admin-photo">' + (f.photo ? '<img src="'+f.photo+'"/>' : '👤') + '</div>'
+      + '<div style="flex:1;"><div style="font-weight:700;color:var(--gold-light);">' + f.name + '</div>'
+      + '<div style="font-size:13px;color:var(--text-dim);">' + (f.subject||'') + '</div></div>'
+      + '<button class="btn-danger-sm" onclick="removeFaculty('+i+')">Remove</button>'
+      + '</div>';
+  }).join('');
+}
+
+// ============================================================
+// GALLERY
+// ============================================================
+function showAddEvent() {
+  document.getElementById('addEventForm').style.display='block';
+  document.getElementById('newEventTitle').value='';
+}
+
+function addEvent() {
+  var title = document.getElementById('newEventTitle').value.trim();
+  if(!title) { showToast('⚠️ Event title daalein', true); return; }
+  if(!DATA.gallery) DATA.gallery = [];
+  DATA.gallery.push({ title: title, photos: [] });
+  saveData().then(function(){
+    renderGallery();
+    document.getElementById('addEventForm').style.display='none';
+  });
+}
+
+function removeEvent(idx) {
+  DATA.gallery.splice(idx,1);
+  saveData().then(function(){ renderGallery(); });
+}
+
+function addPhotoToEvent(idx, input) {
+  var file = input.files[0]; if(!file) return;
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+  showToast('📤 Photo upload ho raha hai...');
+  fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload',{method:'POST',body:formData})
+  .then(function(r){return r.json();})
+  .then(function(res){
+    if(!res.secure_url){showToast('❌ Upload failed',true);return;}
+    if(!DATA.gallery[idx].photos) DATA.gallery[idx].photos=[];
+    DATA.gallery[idx].photos.push(res.secure_url);
+    saveData().then(function(){ renderGallery(); });
+  })
+  .catch(function(e){ showToast('❌ Error: '+e.message,true); });
+}
+
+function removePhoto(evIdx, phIdx) {
+  DATA.gallery[evIdx].photos.splice(phIdx,1);
+  saveData().then(function(){ renderGallery(); });
+}
+
+function renderGallery() {
+  var el = document.getElementById('galleryEvents');
+  var gallery = DATA.gallery || [];
+  if(!gallery.length) {
+    el.innerHTML='<div class="admin-card" style="text-align:center;color:var(--text-dim);font-size:14px;padding:32px;">Koi event nahi. + New Event karein.</div>';
+    return;
+  }
+  el.innerHTML = gallery.map(function(ev,i){
+    var thumbs = (ev.photos||[]).map(function(p,pi){
+      return '<div style="position:relative;display:inline-block;">'
+        +'<img src="'+p+'" class="gallery-thumb"/>'
+        +'<div onclick="removePhoto('+i+','+pi+')" style="position:absolute;top:-5px;right:-5px;width:20px;height:20px;background:#e74c3c;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:#fff;z-index:1;">✕</div>'
+        +'</div>';
+    }).join('');
+    return '<div class="admin-card">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'
+      +'<strong style="font-size:15px;color:#e8c97a;">🎭 '+ev.title+'</strong>'
+      +'<button class="btn-danger-sm" onclick="removeEvent('+i+')">Delete Event</button>'
+      +'</div>'
+      +'<div class="gallery-thumbs">'+thumbs+'</div>'
+      +'<div style="margin-top:16px;">'
+      +'<input type="file" id="gp'+i+'" accept="image/*" onchange="addPhotoToEvent('+i+',this)" style="display:none"/>'
+      +'<button class="btn-save" style="margin-top:0;padding:10px 20px;font-size:13px;" onclick="document.getElementById(\'gp'+i+'\').click()">📷 Add Photos</button>'
+      +'</div></div>';
+  }).join('');
+}
+</script>
+</body>
+</html>

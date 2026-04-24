@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sitaram Public School</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy:#0a1a3a; --navy-light:#132248;
+    --gold:#c9a84c; --gold-light:#e8c97a; --gold-pale:#f5e8c0;
+    --cream:#fdf8ef; --white:#fff;
+    --text-dark:#1a1a2e; --text-mid:#444466;
+    --shadow:0 8px 32px rgba(10,26,58,0.13);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--text-dark);}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:999;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px;box-shadow:0 2px 20px rgba(0,0,0,0.3);}
+  .nav-logo{display:flex;align-items:center;gap:12px;}
+  .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--navy);overflow:hidden;}
+  .logo-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .nav-logo span{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:700;}
+  .nav-logo span em{color:var(--gold-light);font-style:normal;}
+  .nav-links{display:flex;gap:8px;list-style:none;}
+  .nav-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:14px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:8px 16px;border-radius:4px;transition:all 0.3s;}
+  .nav-links a:hover{color:var(--gold-light);background:rgba(201,168,76,0.12);}
+  .nav-links a.active{color:var(--gold);border-bottom:2px solid var(--gold);}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+  .hamburger span{width:26px;height:2px;background:var(--gold);display:block;}
+
+  /* HERO */
+  #home{min-height:100vh;background-color:var(--navy);background-size:cover;background-position:center;background-repeat:no-repeat;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:68px;position:relative;overflow:hidden;}
+  #home::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(10,26,58,0.82) 0%,rgba(10,26,58,0.70) 50%,rgba(10,26,58,0.85) 100%);z-index:1;}
+  .hero-deco{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:1;}
+  .hero-deco::after{content:'';position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--cream),transparent);}
+  .hero-content{position:relative;z-index:2;max-width:760px;padding:40px 20px;}
+  .hero-badge{display:inline-block;background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:6px 20px;border-radius:30px;margin-bottom:28px;}
+  .hero-logo-wrap{width:130px;height:130px;border-radius:50%;border:4px solid var(--gold);background:rgba(10,26,58,0.6);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:0 0 0 8px rgba(201,168,76,0.15),0 8px 32px rgba(0,0,0,0.4);overflow:hidden;backdrop-filter:blur(4px);}
+  .hero-logo-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .hero-content h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,58px);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:12px;text-shadow:0 2px 20px rgba(0,0,0,0.3);}
+  .hero-content h1 span{color:var(--gold-light);}
+  .hero-content p{color:rgba(255,255,255,0.75);font-size:16px;font-weight:300;letter-spacing:0.5px;margin-bottom:36px;}
+  .hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
+  .stat{text-align:center;}
+  .stat strong{display:block;font-family:'Playfair Display',serif;font-size:28px;color:var(--gold-light);}
+  .stat span{font-size:12px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase;}
+  .hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:11px;letter-spacing:2px;text-transform:uppercase;animation:bounce 2s infinite;cursor:pointer;text-decoration:none;}
+  @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+  /* SECTIONS */
+  section{padding:80px 5%;}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+  .section-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,42px);font-weight:900;color:var(--navy);margin-bottom:16px;line-height:1.15;}
+  .section-divider{width:60px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;margin-bottom:48px;}
+
+  /* LEADERSHIP */
+  .leadership{background:var(--white);}
+  .leader-cards{display:flex;gap:40px;flex-wrap:wrap;justify-content:center;}
+  .leader-card{background:var(--cream);border-radius:16px;padding:40px 36px;max-width:440px;flex:1 1 360px;position:relative;overflow:hidden;box-shadow:var(--shadow);border-top:4px solid var(--gold);}
+  .leader-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%);border-radius:50%;}
+  .leader-photo-wrap{width:90px;height:90px;border-radius:50%;border:3px solid var(--gold);margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,var(--navy),var(--navy-light));overflow:hidden;color:var(--gold-light);}
+  .leader-photo-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .leader-role{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .leader-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+  .leader-qual{font-size:13px;color:var(--text-mid);margin-bottom:16px;}
+  .leader-msg{font-size:14px;line-height:1.8;color:var(--text-mid);border-left:3px solid var(--gold-pale);padding-left:14px;font-style:italic;}
+
+  /* FACULTY */
+  .faculty{background:var(--cream);}
+  .faculty-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:28px;}
+  .faculty-card{background:var(--white);border-radius:14px;padding:28px 16px 20px;text-align:center;box-shadow:0 4px 18px rgba(10,26,58,0.07);transition:transform 0.3s,box-shadow 0.3s;border-bottom:3px solid transparent;}
+  .faculty-card:hover{transform:translateY(-6px);box-shadow:0 12px 32px rgba(10,26,58,0.13);border-bottom-color:var(--gold);}
+  .faculty-photo-wrap{width:72px;height:72px;border-radius:50%;border:3px solid var(--gold-pale);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,var(--navy),#1e3a6e);color:var(--gold-light);overflow:hidden;}
+  .faculty-photo-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+  .faculty-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+  .faculty-subject{font-size:12px;color:var(--text-mid);}
+
+  /* GALLERY */
+  .gallery{background:var(--navy);padding-bottom:100px;}
+  .gallery .section-title{color:var(--white);}
+  .gallery-events{display:flex;flex-direction:column;gap:56px;}
+  .gallery-event-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold-light);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+  .gallery-event-title::after{content:'';flex:1;height:1px;background:rgba(201,168,76,0.3);}
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+  .gallery-item{border-radius:10px;overflow:hidden;aspect-ratio:4/3;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.3s,box-shadow 0.3s;border:1px solid rgba(201,168,76,0.15);}
+  .gallery-item:hover{transform:scale(1.03);box-shadow:0 8px 28px rgba(0,0,0,0.4);border-color:var(--gold);}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;}
+  .gallery-empty{color:rgba(255,255,255,0.4);text-align:center;padding:40px;font-size:14px;}
+
+  /* ADMISSION */
+  .admission{background:var(--white);}
+  .admission-inner{display:flex;gap:60px;flex-wrap:wrap;}
+  .admission-info{flex:1 1 340px;}
+  .admission-info h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy);margin-bottom:16px;}
+  .admission-info p{font-size:15px;line-height:1.9;color:var(--text-mid);margin-bottom:20px;}
+  .class-list{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px;}
+  .class-pill{background:var(--navy);color:var(--gold-light);font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;letter-spacing:0.5px;}
+  .fees-badge{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(90deg,var(--gold),var(--gold-light));color:var(--navy);font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px;margin-bottom:28px;}
+  .admission-contact-box{flex:1 1 280px;background:var(--navy);border-radius:16px;padding:40px 32px;color:var(--white);box-shadow:var(--shadow);}
+  .admission-contact-box h4{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold-light);margin-bottom:24px;}
+  .reception-number{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:8px;letter-spacing:1px;}
+  .reception-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+  .instruction-list{margin-top:24px;list-style:none;}
+  .instruction-list li{font-size:14px;color:rgba(255,255,255,0.75);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:flex-start;gap:10px;}
+  .instruction-list li::before{content:'→';color:var(--gold);flex-shrink:0;}
+
+  /* CONTACT */
+  .contact{background:var(--cream);}
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;}
+  .contact-card{background:var(--white);border-radius:14px;padding:32px 28px;box-shadow:0 4px 20px rgba(10,26,58,0.07);display:flex;align-items:flex-start;gap:18px;border-left:4px solid var(--gold);}
+  .contact-icon{width:48px;height:48px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .contact-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:700;}
+  .contact-value{font-size:16px;color:var(--text-dark);font-weight:700;line-height:1.5;}
+  .contact-sub{font-size:13px;color:var(--text-mid);margin-top:4px;}
+
+  /* FOOTER */
+  footer{background:var(--navy);padding:40px 5% 24px;color:rgba(255,255,255,0.6);text-align:center;}
+  .footer-name{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold-light);margin-bottom:8px;}
+  .footer-tagline{font-size:13px;margin-bottom:20px;}
+  .footer-divider{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:20px 0;}
+  .footer-copy{font-size:12px;}
+
+
+
+  @media(max-width:768px){
+    .nav-links{display:none;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:var(--navy);padding:16px 24px;gap:0;}
+    .nav-links.open{display:flex;}
+    .nav-links a{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.08);border-radius:0;}
+    .hamburger{display:flex;}
+    .hero-stats{gap:24px;}
+    .admission-contact-box{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-icon" id="navLogo">S</div>
+    <span>Sitaram <em>Public School</em></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#admission">Admission</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+  </ul>
+  <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-deco"></div>
+  <div class="hero-content">
+    <div class="hero-badge" id="heroBadge">Est. Since 1995 · Faridabad, Haryana</div>
+    <div class="hero-logo-wrap" id="heroLogo"><span id="heroLogoEmoji">🏫</span><img id="heroLogoImg" src="" style="display:none;" alt="Logo"/></div>
+    <h1 id="heroTitle">Sitaram <span>Public School</span></h1>
+    <p id="heroTagline">Shaping Futures · Nurturing Excellence · Building Character</p>
+    <div class="hero-stats">
+      <div class="stat"><strong>25+</strong><span>Years</span></div>
+      <div class="stat"><strong>1000+</strong><span>Students</span></div>
+      <div class="stat"><strong>50+</strong><span>Faculty</span></div>
+      <div class="stat"><strong>Pre-N–12</strong><span>Classes</span></div>
+    </div>
+  </div>
+  <a href="#leadership" class="hero-scroll">↓ Explore</a>
+</section>
+
+<!-- LEADERSHIP -->
+<section id="leadership" class="leadership">
+  <div class="section-label">Our Leadership</div>
+  <div class="section-title">Message from the Helm</div>
+  <div class="section-divider"></div>
+  <div class="leader-cards">
+    <div class="leader-card">
+      <div class="leader-photo-wrap" id="directorPhotoEl">👨‍💼</div>
+      <div class="leader-role">Director</div>
+      <div class="leader-name" id="directorNameEl">Sh. Ramesh Kumar Gupta</div>
+      <div class="leader-qual" id="directorQualEl">M.A., B.Ed. | Founder & Director</div>
+      <div class="leader-msg" id="directorMsgEl">"Our mission is to provide quality education at affordable cost to every child, regardless of their background."</div>
+    </div>
+    <div class="leader-card">
+      <div class="leader-photo-wrap" id="principalPhotoEl">👩‍🏫</div>
+      <div class="leader-role">Principal</div>
+      <div class="leader-name" id="principalNameEl">Mrs. Sunita Sharma</div>
+      <div class="leader-qual" id="principalQualEl">M.Sc., M.Ed., Ph.D. | Principal</div>
+      <div class="leader-msg" id="principalMsgEl">"We believe in holistic development — academic excellence combined with moral values, sports, and arts."</div>
+    </div>
+  </div>
+</section>
+
+<!-- FACULTY -->
+<section class="faculty">
+  <div class="section-label">Our Teachers</div>
+  <div class="section-title">Dedicated Faculty</div>
+  <div class="section-divider"></div>
+  <div class="faculty-grid" id="facultyGrid">
+    <div class="faculty-card"><div class="faculty-photo-wrap">👨‍🏫</div><div class="faculty-name">Mr. Anil Verma</div><div class="faculty-subject">Mathematics</div></div>
+    <div class="faculty-card"><div class="faculty-photo-wrap">👩‍🏫</div><div class="faculty-name">Mrs. Priya Singh</div><div class="faculty-subject">Science</div></div>
+    <div class="faculty-card"><div class="faculty-photo-wrap">👨‍🏫</div><div class="faculty-name">Mr. Rajesh Yadav</div><div class="faculty-subject">Hindi</div></div>
+    <div class="faculty-card"><div class="faculty-photo-wrap">👩‍🏫</div><div class="faculty-name">Mrs. Neha Sharma</div><div class="faculty-subject">English</div></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="gallery">
+  <div class="section-label">Photo Gallery</div>
+  <div class="section-title">School Moments</div>
+  <div class="section-divider" style="background:linear-gradient(90deg,var(--gold),var(--gold-light));"></div>
+  <div class="gallery-events" id="galleryContainer">
+    <p class="gallery-empty">Gallery jald update hogi.</p>
+  </div>
+</section>
+
+<!-- ADMISSION -->
+<section id="admission" class="admission">
+  <div class="section-label">Join Our School</div>
+  <div class="section-title">Admission 2025–26</div>
+  <div class="section-divider"></div>
+  <div class="admission-inner">
+    <div class="admission-info">
+      <h3>Open for All Classes</h3>
+      <div class="class-list">
+        <span class="class-pill">Pre-Nursery</span><span class="class-pill">Nursery</span><span class="class-pill">KG</span>
+        <span class="class-pill">Class I</span><span class="class-pill">Class II</span><span class="class-pill">Class III</span>
+        <span class="class-pill">Class IV</span><span class="class-pill">Class V</span><span class="class-pill">Class VI</span>
+        <span class="class-pill">Class VII</span><span class="class-pill">Class VIII</span><span class="class-pill">Class IX</span>
+        <span class="class-pill">Class X</span><span class="class-pill">Class XI</span><span class="class-pill">Class XII</span>
+      </div>
+      <div class="fees-badge">💰 Affordable Fees — Quality Education for All</div>
+      <p>Sitaram Public School offers world-class education at fees every family can afford.</p>
+    </div>
+    <div class="admission-contact-box">
+      <h4>📞 Contact for Admission</h4>
+      <div class="reception-label">Reception Number</div>
+      <div class="reception-number" id="admissionPhoneEl">+91 98765 43210</div>
+      <ul class="instruction-list" id="instructionListEl">
+        <li>Visit school office between 9 AM – 2 PM on working days</li>
+        <li>Bring previous class result / TC for transfer cases</li>
+        <li>Aadhar card of student & parents required</li>
+        <li>2 passport-size photos of student needed</li>
+        <li>Limited seats available — apply early</li>
+        <li>No donation / capitation fee charged</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <div class="section-label">Get in Touch</div>
+  <div class="section-title">Contact Us</div>
+  <div class="section-divider"></div>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="contact-icon">📍</div>
+      <div><div class="contact-label">Address</div><div class="contact-value">Sitaram Public School</div><div class="contact-sub" id="contactAddressEl">Near Bus Stand, Sector 12, Faridabad, Haryana — 121007</div></div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">📱</div>
+      <div><div class="contact-label">Mobile</div><div class="contact-value" id="contactMobileEl">+91 98765 43210</div><div class="contact-sub">Mon–Sat · 9:00 AM to 4:00 PM</div></div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">✉️</div>
+      <div><div class="contact-label">Email</div><div class="contact-value" id="contactEmailEl">info@sitarampublicschool.in</div><div class="contact-sub">We reply within 24 hours</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name" id="footerName">Sitaram Public School</div>
+  <div class="footer-tagline" id="footerTagline">Shaping Futures · Nurturing Excellence · Building Character</div>
+  <hr class="footer-divider"/>
+  <div class="footer-copy">© 2025 Sitaram Public School, Faridabad. All rights reserved.</div>
+</footer>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+var SB_URL = 'https://rsbrwhtnidcuiyfhlsio.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzYnJ3aHRuaWRjdWl5Zmhsc2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjU3MzYsImV4cCI6MjA5MjUwMTczNn0.uxKe2GsRqd9jnCv5iVAFtS_CuZZ0lSTe2NPorc54uk8';
+var SB_API = SB_URL + '/rest/v1/school_data?id=eq.1';
+
+// ============================================================
+// FETCH DATA FROM JSONBIN AND RENDER
+// ============================================================
+function loadSiteData() {
+  fetch(SB_API, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY
+    }
+  })
+  .then(function(r) {
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(rows) {
+    var d = (rows && rows[0] && rows[0].data) ? rows[0].data : {};
+    renderAll(d);
+  })
+  .catch(function(e) {
+    console.log('Load error:', e);
+  });
+}
+
+function setText(id, val) {
+  var el = document.getElementById(id);
+  if (el && val) el.textContent = val;
+}
+
+function renderAll(d) {
+  // HERO BG
+  if (d.school_bg) {
+    document.getElementById('home').style.backgroundImage = 'url(' + d.school_bg + ')';
+  }
+
+  // LOGO
+  if (d.school_logo) {
+    var img = document.getElementById('heroLogoImg');
+    var em = document.getElementById('heroLogoEmoji');
+    img.src = d.school_logo;
+    img.style.display = 'block';
+    em.style.display = 'none';
+    var navLogo = document.getElementById('navLogo');
+    navLogo.innerHTML = '<img src="' + d.school_logo + '" style="width:38px;height:38px;border-radius:50%;object-fit:cover;"/>';
+  }
+
+  // SCHOOL INFO
+  if (d.school_name) {
+    document.getElementById('heroTitle').innerHTML = d.school_name;
+    setText('footerName', d.school_name);
+  }
+  if (d.school_tagline) {
+    setText('heroTagline', d.school_tagline);
+    setText('footerTagline', d.school_tagline);
+  }
+  var est = d.school_est || '1995';
+  var city = d.school_city || 'Faridabad, Haryana';
+  document.getElementById('heroBadge').textContent = 'Est. Since ' + est + ' · ' + city;
+
+  // DIRECTOR
+  if (d.director_photo) {
+    var el = document.getElementById('directorPhotoEl');
+    el.innerHTML = '<img src="' + d.director_photo + '"/>';
+  }
+  setText('directorNameEl', d.director_name);
+  setText('directorQualEl', d.director_qual);
+  setText('directorMsgEl', d.director_msg);
+
+  // PRINCIPAL
+  if (d.principal_photo) {
+    var el2 = document.getElementById('principalPhotoEl');
+    el2.innerHTML = '<img src="' + d.principal_photo + '"/>';
+  }
+  setText('principalNameEl', d.principal_name);
+  setText('principalQualEl', d.principal_qual);
+  setText('principalMsgEl', d.principal_msg);
+
+  // FACULTY
+  if (d.faculty && d.faculty.length > 0) {
+    var grid = document.getElementById('facultyGrid');
+    grid.innerHTML = d.faculty.map(function(f) {
+      var photoHtml = f.photo
+        ? '<img src="' + f.photo + '"/>'
+        : '👨‍🏫';
+      return '<div class="faculty-card">'
+        + '<div class="faculty-photo-wrap">' + photoHtml + '</div>'
+        + '<div class="faculty-name">' + f.name + '</div>'
+        + '<div class="faculty-subject">' + (f.subject || '') + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // GALLERY
+  if (d.gallery && d.gallery.length > 0) {
+    var gc = document.getElementById('galleryContainer');
+    gc.innerHTML = d.gallery.map(function(ev) {
+      var photos = (ev.photos && ev.photos.length > 0)
+        ? ev.photos.map(function(p) {
+            return '<div class="gallery-item"><img src="' + p + '"/></div>';
+          }).join('')
+        : '<div style="color:rgba(255,255,255,0.4);font-size:13px;padding:10px;">Photos aate hi update hongi.</div>';
+      return '<div>'
+        + '<div class="gallery-event-title">🎭 ' + ev.title + '</div>'
+        + '<div class="gallery-grid">' + photos + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // CONTACT
+  setText('contactAddressEl', d.address);
+  setText('contactMobileEl', d.mobile);
+  setText('contactEmailEl', d.email);
+
+  // ADMISSION
+  setText('admissionPhoneEl', d.admission_phone);
+  if (d.admission_instructions) {
+    var lines = d.admission_instructions.split('\n').filter(function(l) { return l.trim(); });
+    document.getElementById('instructionListEl').innerHTML =
+      lines.map(function(l) { return '<li>' + l.trim() + '</li>'; }).join('');
+  }
+}
+
+// NAV SCROLL HIGHLIGHT
+var sections = document.querySelectorAll('section[id]');
+var navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', function() {
+  var current = '';
+  sections.forEach(function(s) { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(function(a) {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// START
+loadSiteData();
+</script>
+</body>
+</html>
